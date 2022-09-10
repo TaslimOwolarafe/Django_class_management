@@ -11,7 +11,7 @@ urlpatterns = [
     path("assignments/", views.AssignmentListCreateAPIView.as_view(), name="assignments"),
     path("assignment/<int:pk>", views.AssignmentDetailAPIView.as_view(), name="assignment-detail"),
     path("assignment_solutions/", views.AssignmentSolutionListCreateAPIView.as_view(), name="assignment-solutions"),
-    path("assignments_solution/<int:pk>", views.AssignmentSolutionDetailAPIView.as_view(), name="assignment-solution-detail"),
+    path("assignment_solution/<int:pk>", views.AssignmentSolutionDetailAPIView.as_view(), name="assignment-solution-detail"),
     path("student_classes/", views.StudentClassListCreateAPIView.as_view(), name="student_classes"),
     path("student_class/<int:pk>", views.StudentClassDetailAPIView.as_view(), name="student-class")
 ]

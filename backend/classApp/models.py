@@ -20,6 +20,7 @@ class Teacher(models.Model):
 class StudentClass(models.Model):
     name = models.CharField(max_length=225)
     students = models.ManyToManyField(Student, related_name='student_class')
+    teacher = models.ForeignKey(Teacher, related_name='student_class',on_delete=models.SET_NULL,null=True)
     
     class Meta:
         verbose_name_plural = 'Student Classes'
@@ -30,8 +31,8 @@ class StudentClass(models.Model):
 class Assignment(models.Model):
     name = models.CharField(max_length=225)
     student_class = models.ForeignKey(StudentClass, related_name='assignments', on_delete=models.SET_NULL, null=True)
-    body = models.CharField(max_length=400, null=True)
-    attachment = models.FileField(upload_to='assignments/',null=True)
+    body = models.CharField(max_length=400, null=True,blank=True)
+    attachment = models.FileField(upload_to='assignments/',null=True,blank=True)
     teacher = models.ForeignKey(Teacher, related_name='assignments', on_delete=models.SET_NULL, null=True)
     date_given = models.DateTimeField(auto_now_add=True)
 

@@ -7,47 +7,47 @@ from classApp.models import Announcement, Assignment, Student, StudentClass, Ass
 class UserPublicSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
     first_name = serializers.CharField()
-    last_name = serializers.CharField()
-
-class StudentSerializer(ModelSerializer):
-    user = UserPublicSerializer(read_only=True)
-
-    class Meta:
-        model = User
-        fields = ['user']
-            
+    last_name = serializers.CharField()            
         
-
-class TeacherSerializer(ModelSerializer):
-    user = UserPublicSerializer(read_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            'user'
-        ]
 
 class StudentClassSerializer(ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='student-class', lookup_field='pk', read_only=True
     )
+    students = serializers.StringRelatedField(many=True)
+    teacher = serializers.StringRelatedField(many=False)
+
     class Meta:
         model = StudentClass
         fields = [
-            'name', 'students', 'url'
+           'id', 'name', 'students', 'url', 'teacher'
         ]
 
-        def get_students(self, StudentClass):
-            students = []
-            for student in StudentClass.students:
-                students.append(f"{student.first_name} {student.last_name}")
-            return students
+class StudentSerializer(ModelSerializer):
+    user = UserPublicSerializer(read_only=True)
+    student_class = StudentClassSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'user', 'student_class']
+
+    # def to_representation(self, instance):
+    #     return f"{instance.user.first_name} {instance.user.last_name}"
+
+class TeacherSerializer(ModelSerializer):
+    user = UserPublicSerializer(read_only=True)
+    student_class = StudentClassSerializer(many=True)
+    class Meta:
+        model = User
+        fields = [
+            'id', 'user', 'student_class'
+        ]
 
 class AssignmentSerializer(ModelSerializer):
     class Meta:
         model = Assignment
         fields = [
-            'name', 'student_class', 'body', 'attachment',
+            'id', 'name', 'student_class', 'body', 'attachment',
             'teacher', 'date_given'
         ]
 
@@ -55,16 +55,18 @@ class AssignmentSolutionSerializer(ModelSerializer):
     class Meta:
         model = AssignmentSolution
         fields = [
-            'student', 'assignment', 'solution', 
+            'id', 'student', 'assignment', 'solution', 
             'date_submitted', 'completed'
         ]
 
 class AnnouncementSerializer(ModelSerializer):
     body = serializers.SerializerMethodField()
+    teacher = serializers.StringRelatedField(many=False)
+    student_class = StudentClassSerializer(many=True)
     class Meta:
         model = Announcement
         fields = [
-            'title', 'body', 'student_class',
+            'id', 'title', 'body', 'student_class',
             'teacher', 'date_posted'
         ]
 

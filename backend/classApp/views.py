@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login
 from . forms import LoginForm
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 # Create your views here.
 
 def login_view(request):
@@ -10,7 +11,7 @@ def login_view(request):
         user = form.login(request)
         if user:
             login(request, user)
-            return HttpResponseRedirect("users/home.html")
+            return HttpResponseRedirect(reverse('home'))
     return render(request, 'registration/login.html', {'login_form': form })
 
 def home(request):
